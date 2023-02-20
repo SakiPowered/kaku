@@ -1,0 +1,40 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath('gradle.plugin.com.github.johnrengelman:shadow:7.1.2')
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+group 'gg.saki'
+version '1.0-SNAPSHOT'
+
+subprojects {
+    apply(plugin: 'java')
+    apply(plugin: 'com.github.johnrengelman.shadow')
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    tasks.withType(JavaCompile) {
+        options.encoding('UTF-8')
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    }
+
+    dependencies {
+        compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+    }
+}
