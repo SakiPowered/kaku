@@ -1,6 +1,7 @@
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1' apply false
     id 'maven-publish'
+    id 'signing'
     id 'java-library'
 }
 
@@ -61,43 +62,53 @@ java {
     withJavadocJar()
 }
 
-//buildscript {
-//    repositories {
-//        maven {
-//            url "https://plugins.gradle.org/m2/"
-//        }
-//    }
+boolean isReleaseVersion = !this.version.toString().endsWith("SNAPSHOT")
+
+publishing {
+    repositories {
+        maven {
+            name = 'saki'
+            url = isReleaseVersion  ? 'https://repo.saki.gg/releases' : 'https://repo.saki.gg/snapshots'
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+
+    publications {
+        main(MavenPublication) {
+            from components.java
+
+            pom {
+                name = this.project.name
+                description = this.project.description
+                url = 'https://github.com/SakiPowered/kaku'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/SakiPowered/kaku.git'
+                    developerConnection = 'scm:git:ssh://github.com/SakiPowered/kaku.git'
+                    url = 'https://github.com/SakiPowered/kaku'
+                }
+            }
+        }
+    }
+}
+
+//signing {
+//    required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
 //
-//    dependencies {
-//        classpath('gradle.plugin.com.github.johnrengelman:shadow:7.1.2')
-//    }
-//}
+//    def signingKeyId = findProperty("signingKeyId")
+//    def signingKey = findProperty("signingKey")
+//    def signingPassword = findProperty("signingPassword")
+//    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 //
-//plugins {
-//    id 'java'
-//}
-//
-//group 'gg.saki'
-//version '1.0-SNAPSHOT'
-//
-//subprojects {
-//    apply(plugin: 'java')
-//    apply(plugin: 'com.github.johnrengelman.shadow')
-//
-//    sourceCompatibility = JavaVersion.VERSION_17
-//    targetCompatibility = JavaVersion.VERSION_17
-//
-//    tasks.withType(JavaCompile) {
-//        options.encoding('UTF-8')
-//    }
-//
-//    repositories {
-//        mavenCentral()
-//        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
-//        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-//    }
-//
-//    dependencies {
-//        compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
-//    }
+//    sign publishing.publications.main
 //}
