@@ -1,40 +1,103 @@
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
+plugins {
+    id 'org.cadixdev.licenser' version '0.6.1' apply false
+    id 'maven-publish'
+    id 'java-library'
+}
+
+
+description('A Spigot configuration API') // add a better description
+
+allprojects {
+    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'java'
+
+    group('gg.saki')
+    version('1.0.0-SNAPSHOT')
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(8))
         }
     }
 
-    dependencies {
-        classpath('gradle.plugin.com.github.johnrengelman:shadow:7.1.2')
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.compilerArgs += ['-parameters', '-Xlint:all']
+
+        finalizedBy(tasks.licenseFormat)
     }
-}
 
-plugins {
-    id 'java'
-}
 
-group 'gg.saki'
-version '1.0-SNAPSHOT'
+    license {
+        header = project.rootProject.file('LICENSE')
 
-subprojects {
-    apply(plugin: 'java')
-    apply(plugin: 'com.github.johnrengelman.shadow')
+        include '**/*.java'
+        charset = 'UTF-8'
+        lineEnding = '\n'
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-
-    tasks.withType(JavaCompile) {
-        options.encoding('UTF-8')
+        style {
+            java = 'BLOCK_COMMENT'
+        }
     }
 
     repositories {
         mavenCentral()
-        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     }
 
     dependencies {
-        compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+        compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT')
     }
 }
+
+dependencies {
+    compileOnlyApi('org.jetbrains:annotations:24.0.1')
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+//buildscript {
+//    repositories {
+//        maven {
+//            url "https://plugins.gradle.org/m2/"
+//        }
+//    }
+//
+//    dependencies {
+//        classpath('gradle.plugin.com.github.johnrengelman:shadow:7.1.2')
+//    }
+//}
+//
+//plugins {
+//    id 'java'
+//}
+//
+//group 'gg.saki'
+//version '1.0-SNAPSHOT'
+//
+//subprojects {
+//    apply(plugin: 'java')
+//    apply(plugin: 'com.github.johnrengelman.shadow')
+//
+//    sourceCompatibility = JavaVersion.VERSION_17
+//    targetCompatibility = JavaVersion.VERSION_17
+//
+//    tasks.withType(JavaCompile) {
+//        options.encoding('UTF-8')
+//    }
+//
+//    repositories {
+//        mavenCentral()
+//        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+//        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+//    }
+//
+//    dependencies {
+//        compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+//    }
+//}

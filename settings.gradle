@@ -1,4 +1,3 @@
 rootProject.name = 'kaku'
-include 'kaku-api'
-include 'kaku-example'
 
+include('kaku-example')
