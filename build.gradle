@@ -1,40 +1,115 @@
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
+plugins {
+    id 'org.cadixdev.licenser' version '0.6.1' apply false
+    id 'maven-publish'
+    id 'signing'
+    id 'java-library'
+}
+
+
+description('A Spigot configuration API') // TODO: add a better description before merge
+
+allprojects {
+    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'java'
+
+    group('gg.saki')
+    version('1.0.0-SNAPSHOT')
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(8))
         }
     }
 
-    dependencies {
-        classpath('gradle.plugin.com.github.johnrengelman:shadow:7.1.2')
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.compilerArgs += ['-parameters', '-Xlint:all']
+
+        finalizedBy(tasks.licenseFormat)
     }
-}
 
-plugins {
-    id 'java'
-}
 
-group 'gg.saki'
-version '1.0-SNAPSHOT'
+    license {
+        header = project.rootProject.file('LICENSE')
 
-subprojects {
-    apply(plugin: 'java')
-    apply(plugin: 'com.github.johnrengelman.shadow')
+        include '**/*.java'
+        charset = 'UTF-8'
+        lineEnding = '\n'
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-
-    tasks.withType(JavaCompile) {
-        options.encoding('UTF-8')
+        style {
+            java = 'BLOCK_COMMENT'
+        }
     }
 
     repositories {
         mavenCentral()
-        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     }
 
     dependencies {
-        compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+        compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT')
     }
 }
+
+dependencies {
+    compileOnlyApi('org.jetbrains:annotations:24.0.1')
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+boolean isReleaseVersion = !this.version.toString().endsWith("SNAPSHOT")
+
+publishing {
+    repositories {
+        maven {
+            name = 'saki'
+            url = isReleaseVersion  ? 'https://repo.saki.gg/releases' : 'https://repo.saki.gg/snapshots'
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+
+    publications {
+        main(MavenPublication) {
+            from components.java
+
+            pom {
+                name = this.project.name
+                description = this.project.description
+                url = 'https://github.com/SakiPowered/kaku'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/SakiPowered/kaku.git'
+                    developerConnection = 'scm:git:ssh://github.com/SakiPowered/kaku.git'
+                    url = 'https://github.com/SakiPowered/kaku'
+                }
+            }
+        }
+    }
+}
+
+// TODO: enable this before merge
+//signing {
+//    required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
+//
+//    def signingKeyId = findProperty("signingKeyId")
+//    def signingKey = findProperty("signingKey")
+//    def signingPassword = findProperty("signingPassword")
+//    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+//
+//    sign publishing.publications.main
+//}

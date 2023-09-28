@@ -1,8 +1,17 @@
 plugins {
-    id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+description('Example plugin for Kaku')
+
+tasks.withType(ProcessResources).configureEach {
+    filteringCharset('UTF-8')
+
+    filesMatching('plugin.yml') {
+        expand(project.properties)
+    }
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:20.1.0'
-    implementation(project(':kaku-api'))
+    implementation(project.rootProject)
 }

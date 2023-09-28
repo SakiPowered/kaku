@@ -1,4 +1,4 @@
 name: Kaku-Example
 main: gg.saki.kaku.ExamplePlugin
-version: 1.0.0
+version: ${version}
 api-version: 1.16
