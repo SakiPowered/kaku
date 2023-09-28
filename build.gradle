@@ -6,7 +6,7 @@ plugins {
 }
 
 
-description('A Spigot configuration API') // add a better description
+description('A Spigot configuration API') // TODO: add a better description before merge
 
 allprojects {
     apply plugin: 'org.cadixdev.licenser'
@@ -102,6 +102,7 @@ publishing {
     }
 }
 
+// TODO: enable this before merge
 //signing {
 //    required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
 //
