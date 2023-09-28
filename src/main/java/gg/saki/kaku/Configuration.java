@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class Configuration extends YamlConfiguration {
 
@@ -53,7 +54,7 @@ public abstract class Configuration extends YamlConfiguration {
         this.load();
     }
 
-    public Configuration(JavaPlugin plugin, String fileName) {
+    public Configuration(@NotNull JavaPlugin plugin, @NotNull String fileName) {
         this(plugin, new File(plugin.getDataFolder(), fileName));
     }
 
@@ -84,5 +85,27 @@ public abstract class Configuration extends YamlConfiguration {
         this.options().copyDefaults(true);
         this.save();
         return leaf;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Configuration that = (Configuration) o;
+        return Objects.equals(this.file, that.file) && Objects.equals(this.defaults, that.defaults);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), this.file, this.defaults);
+    }
+
+    @Override
+    public String toString() {
+        return "Configuration{" +
+                "file=" + this.file +
+                ", defaults=" + this.defaults +
+                '}';
     }
 }

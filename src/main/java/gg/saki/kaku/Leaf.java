@@ -28,6 +28,8 @@ import org.bukkit.configuration.MemorySection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class Leaf<T> {
 
     private final @NotNull Configuration configuration;
@@ -67,5 +69,28 @@ public class Leaf<T> {
         org.bukkit.configuration.Configuration root = this.configuration.getRoot();
         org.bukkit.configuration.Configuration defaults = root == null ? null : root.getDefaults();
         return (defaults == null) ? null : defaults.get(MemorySection.createPath(this.configuration, path));
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Leaf<?> that = (Leaf<?>) o;
+        return Objects.equals(this.type, that.type) && Objects.equals(this.path, that.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.type, this.path);
+    }
+
+    @Override
+    public String toString() {
+        return "Leaf{" +
+                ", type=" + this.type +
+                ", path='" + this.path + '\'' +
+                '}';
     }
 }
