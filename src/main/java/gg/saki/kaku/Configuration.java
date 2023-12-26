@@ -30,6 +30,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +50,8 @@ public abstract class Configuration extends YamlConfiguration {
     private final @NotNull Map<String, Leaf<?>> defaults;
 
     public Configuration(@NotNull JavaPlugin plugin, @NotNull File file) {
+        ConfigurationSerialization.registerClass(Text.class);
+
         this.plugin = plugin;
         this.file = file;
         this.defaults = new HashMap<>();

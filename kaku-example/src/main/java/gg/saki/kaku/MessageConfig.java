@@ -38,4 +38,8 @@ public class MessageConfig extends Configuration{
     @Comment("This is your name")
     public final Leaf<String> NAME = useDefault(String.class, "DylanDeNewb", "name");
     public final Leaf<Location> LOCATION = useDefault(Location.class, new Location(Bukkit.getWorld("world"), 0,0,0), "location");
+
+    public final Leaf<Text> CHAT = useDefault(Text.class, new Text("&#fc037bHELLO"), "text.chat");
+    public final Leaf<Text> ACTIONBAR = useDefault(Text.class, new Text("&#5757ffGOODBYE", TextPosition.ACTIONBAR), "text.actionbar");
+    public final Leaf<Text> TITLE = useDefault(Text.class, new Text("&#bfff57AFTERNOON", TextPosition.TITLE), "text.title");
 }

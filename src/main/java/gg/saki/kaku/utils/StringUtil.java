@@ -22,36 +22,31 @@
  * SOFTWARE.
  */
 
-package gg.saki.kaku;
+package gg.saki.kaku.utils;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.ChatColor;
 
-public class ExamplePlugin extends JavaPlugin implements Listener {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-    private MessageConfig messageConfig;
+import static org.bukkit.ChatColor.COLOR_CHAR;
 
-    @Override
-    public void onEnable() {
-        this.messageConfig = new MessageConfig(this, "messages.yml").loadComments();
+public class StringUtil {
 
-        getLogger().info(messageConfig.NAME.get());
-        getLogger().info(messageConfig.LOCATION.get().toString());
+    private static final Pattern hexPattern = Pattern.compile("&#([A-Fa-f0-9]{6})");
 
-        messageConfig.ACTIONBAR.get().send(Bukkit.getConsoleSender());
-
-        Bukkit.getPluginManager().registerEvents(this, this);
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event){
-        Player player = event.getPlayer();
-
-        messageConfig.ACTIONBAR.get().send(player);
-        messageConfig.TITLE.get().send(player);
+    public static String translate(String message) {
+        Matcher matcher = hexPattern.matcher(message);
+        StringBuilder buffer = new StringBuilder(message.length() + 4 * 8);
+        while (matcher.find())
+        {
+            String group = matcher.group(1);
+            matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+                    + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
+                    + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
+                    + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5)
+            );
+        }
+        return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
     }
 }

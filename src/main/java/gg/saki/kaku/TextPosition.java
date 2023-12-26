@@ -24,34 +24,6 @@
 
 package gg.saki.kaku;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.java.JavaPlugin;
-
-public class ExamplePlugin extends JavaPlugin implements Listener {
-
-    private MessageConfig messageConfig;
-
-    @Override
-    public void onEnable() {
-        this.messageConfig = new MessageConfig(this, "messages.yml").loadComments();
-
-        getLogger().info(messageConfig.NAME.get());
-        getLogger().info(messageConfig.LOCATION.get().toString());
-
-        messageConfig.ACTIONBAR.get().send(Bukkit.getConsoleSender());
-
-        Bukkit.getPluginManager().registerEvents(this, this);
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event){
-        Player player = event.getPlayer();
-
-        messageConfig.ACTIONBAR.get().send(player);
-        messageConfig.TITLE.get().send(player);
-    }
+public enum TextPosition {
+    CHAT, ACTIONBAR, TITLE
 }
