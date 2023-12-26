@@ -22,19 +22,20 @@
  * SOFTWARE.
  */
 
-package gg.saki.kaku;
+package gg.saki.kaku.annotations;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-public class ExamplePlugin extends JavaPlugin {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    private MessageConfig messageConfig;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Comment {
 
-    @Override
-    public void onEnable() {
-        this.messageConfig = new MessageConfig(this, "messages.yml").loadComments();
+    String[] value();
 
-        getLogger().info(messageConfig.NAME.get());
-        getLogger().info(messageConfig.LOCATION.get().toString());
-    }
+    @NotNull CommentPosition position() default CommentPosition.ABOVE;
 }

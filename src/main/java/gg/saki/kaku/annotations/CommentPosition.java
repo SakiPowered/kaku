@@ -22,19 +22,8 @@
  * SOFTWARE.
  */
 
-package gg.saki.kaku;
+package gg.saki.kaku.annotations;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
-public class ExamplePlugin extends JavaPlugin {
-
-    private MessageConfig messageConfig;
-
-    @Override
-    public void onEnable() {
-        this.messageConfig = new MessageConfig(this, "messages.yml").loadComments();
-
-        getLogger().info(messageConfig.NAME.get());
-        getLogger().info(messageConfig.LOCATION.get().toString());
-    }
+public enum CommentPosition {
+    ABOVE, INLINE
 }

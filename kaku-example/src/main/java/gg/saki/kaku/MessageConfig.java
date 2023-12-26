@@ -24,6 +24,7 @@
 
 package gg.saki.kaku;
 
+import gg.saki.kaku.annotations.Comment;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,6 +35,7 @@ public class MessageConfig extends Configuration{
         super(plugin, fileName);
     }
 
+    @Comment("This is your name")
     public final Leaf<String> NAME = useDefault(String.class, "DylanDeNewb", "name");
     public final Leaf<Location> LOCATION = useDefault(Location.class, new Location(Bukkit.getWorld("world"), 0,0,0), "location");
 }

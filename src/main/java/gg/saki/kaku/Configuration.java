@@ -24,6 +24,10 @@
 
 package gg.saki.kaku;
 
+import gg.saki.kaku.annotations.Comment;
+import gg.saki.kaku.annotations.CommentPosition;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,17 +36,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public abstract class Configuration extends YamlConfiguration {
 
+
+    private final JavaPlugin plugin;
     private final @NotNull File file;
 
     private final @NotNull Map<String, Leaf<?>> defaults;
 
     public Configuration(@NotNull JavaPlugin plugin, @NotNull File file) {
+        this.plugin = plugin;
         this.file = file;
         this.defaults = new HashMap<>();
 
@@ -51,12 +57,14 @@ public abstract class Configuration extends YamlConfiguration {
             plugin.saveResource(file.getName().endsWith(".yml") ? file.getName() : file.getName() + ".yml", false);
         }
 
+        this.options().copyDefaults(true);
         this.load();
     }
 
     public Configuration(@NotNull JavaPlugin plugin, @NotNull String fileName) {
         this(plugin, new File(plugin.getDataFolder(), fileName));
     }
+
 
     public void load() {
         try {
@@ -82,9 +90,36 @@ public abstract class Configuration extends YamlConfiguration {
 
         Leaf<T> leaf = new Leaf<>(this, type, value, path);
         this.defaults.put(path, leaf);
-        this.options().copyDefaults(true);
         this.save();
         return leaf;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Configuration> T loadComments() {
+
+        for(Field field : this.getClass().getDeclaredFields()){
+            if(field.getType() != Leaf.class) continue;
+
+            Comment comment = field.getAnnotation(Comment.class);
+            if(comment == null) continue;
+
+            try{
+                field.setAccessible(true);
+                Leaf<?> leaf = (Leaf<?>) field.get(this);
+                List<String> comments = Arrays.asList(comment.value());
+
+                if (comment.position() == CommentPosition.INLINE) {
+                    this.setInlineComments(leaf.getPath(), comments);
+                } else {
+                    this.setComments(leaf.getPath(), comments);
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        this.save();
+        return (T) this;
     }
 
     @Override

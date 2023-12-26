@@ -54,7 +54,6 @@ public class Leaf<T> {
         return this;
     }
 
-
     private T getObject(@NotNull String path, @NotNull Class<T> clazz) {
         Object def = this.getDefault(path);
         return getObject(path, clazz, (clazz.isInstance(def)) ? clazz.cast(def) : null);
@@ -71,6 +70,9 @@ public class Leaf<T> {
         return (defaults == null) ? null : defaults.get(MemorySection.createPath(this.configuration, path));
     }
 
+    public String getPath() {
+        return path;
+    }
 
     @Override
     public boolean equals(Object o) {
