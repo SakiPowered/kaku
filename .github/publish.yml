@@ -1,4 +1,4 @@
-name: Publish project to Maven repository
+name: Build and Publish
 # Publish manually
 on:
   release:
@@ -7,20 +7,6 @@ on:
 
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: 17
-          distribution: 'zulu'
-          cache: 'gradle'
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Publish with Gradle
-        run: ./gradlew build publish
-        env:
-          MAVEN_NAME: ${{ secrets.MAVEN_NAME }} # token name
-          MAVEN_SECRET: ${{ secrets.MAVEN_SECRET }} # token secret (password)
+  call-build:
+    uses: SakiPowered/.github/.github/workflows/shared-gradle-publish.yml@trunk
+    secrets: inherit
