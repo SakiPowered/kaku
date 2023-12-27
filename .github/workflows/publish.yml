@@ -8,5 +8,5 @@ on:
 
 jobs:
   call-build:
-    uses: SakiPowered/.github/.github/workflows/shared-gradle-publish.yml@trunk
+    uses: SakiPowered/.github/.github/workflows/shared-gradle-publish.yml@master
     secrets: inherit
