@@ -70,8 +70,12 @@ public class Leaf<T> {
         return (defaults == null) ? null : defaults.get(MemorySection.createPath(this.configuration, path));
     }
 
-    public String getPath() {
-        return path;
+    public @NotNull String getPath() {
+        return this.path;
+    }
+
+    public @NotNull Class<T> getType() {
+        return this.type;
     }
 
     @Override

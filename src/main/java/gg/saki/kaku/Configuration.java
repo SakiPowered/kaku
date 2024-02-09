@@ -126,6 +126,10 @@ public abstract class Configuration extends YamlConfiguration {
         return (T) this;
     }
 
+    public @NotNull Map<String, Leaf<?>> getDefaultLeaves() {
+        return this.defaults;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
